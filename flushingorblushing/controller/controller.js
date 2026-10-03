@@ -6,6 +6,21 @@
   try { const saved = JSON.parse(sessionStorage.getItem(key) || '[]'); if (Array.isArray(saved)) spent = new Set(saved.filter(n => names.includes(n))); } catch {}
   const buttons = new Map([...document.querySelectorAll('[data-card]')].map(b => [b.dataset.card, b]));
   const announcement = document.getElementById('announcement');
+  const explanationToggle = document.getElementById('toggle-explanations');
+  const explanationKey = 'flushing-or-blushing:hide-explanations:v1';
+  let explanationsHidden = false;
+  try { explanationsHidden = sessionStorage.getItem(explanationKey) === 'true'; } catch {}
+  function renderExplanations() {
+    document.body.classList.toggle('hide-explanations', explanationsHidden);
+    explanationToggle.textContent = explanationsHidden ? 'Show explanations' : 'Hide explanations';
+    explanationToggle.setAttribute('aria-pressed', String(explanationsHidden));
+  }
+  renderExplanations();
+  explanationToggle.addEventListener('click', () => {
+    explanationsHidden = !explanationsHidden;
+    try { sessionStorage.setItem(explanationKey, String(explanationsHidden)); } catch {}
+    renderExplanations();
+  });
   function render(name) {
     const button = buttons.get(name);
     button.disabled = true;
